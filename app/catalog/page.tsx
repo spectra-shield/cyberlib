@@ -1,100 +1,50 @@
-"use client";
-
-import { useState } from "react";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
-const tools = [
-  {
-    slug: "nmap",
-    name: "nmap",
-    type: "network",
-    severity: null,
-    description: "Network scanner and host discovery",
-  },
-  {
-    slug: "burp-suite",
-    name: "burp suite",
-    type: "dast",
-    severity: "high",
-    description: "Web application security testing",
-  },
-  {
-    slug: "splunk",
-    name: "splunk",
-    type: "siem",
-    severity: null,
-    description: "Log aggregation and SIEM platform",
-  },
-  {
-    slug: "wireshark",
-    name: "wireshark",
-    type: "network",
-    severity: null,
-    description: "Network protocol analyzer",
-  },
-];
-
-const categories = ["all", "network", "siem", "dast"];
-
-export default function Catalog() {
-  const [activeCategory, setActiveCategory] = useState("all");
-
-  const filtered =
-    activeCategory === "all"
-      ? tools
-      : tools.filter((t) => t.type === activeCategory);
+export default async function Home() {
+  const totalTools = await prisma.tool.count();
+  const categories = await prisma.category.findMany({
+    include: { _count: { select: { tools: true } } },
+  });
 
   return (
-    <div className="px-8 py-12 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-medium mb-6">Catalog</h1>
+    <div className="relative overflow-hidden px-8 py-16">
+      <div className="glow absolute -top-32 left-1/2 -translate-x-1/2 w-[480px] h-[280px] pointer-events-none" />
 
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`text-sm px-3.5 py-1.5 rounded-lg border ${
-              activeCategory === cat
-                ? "bg-accent-start/20 border-accent-start text-text-primary"
-                : "border-border text-text-secondary"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      <div className="relative text-center max-w-xl mx-auto mb-14">
+        <h1 className="text-4xl font-medium leading-tight mb-4">
+          Find the right security
+          <br />
+          tool in seconds.
+        </h1>
+        <p className="text-sm text-text-secondary mb-6">
+          A curated catalog of scanners, SIEM platforms and forensics tools —
+          with checklists for how to actually use them.
+        </p>
+        <Link
+          href="/catalog"
+          className="gradient-accent inline-block text-sm font-medium text-white px-5 py-2.5 rounded-lg"
+        >
+          Browse catalog
+        </Link>
       </div>
 
-      <div className="border-t border-border">
-        <div className="grid grid-cols-[1fr_100px_90px] px-1 py-2 text-xs text-text-muted font-mono border-b border-border">
-          <span>name</span>
-          <span>type</span>
-          <span>severity</span>
+      <div className="relative max-w-2xl mx-auto bg-surface border border-border rounded-xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm font-medium">Catalog overview</span>
+          <span className="text-xs text-text-secondary">{totalTools} tools</span>
         </div>
-
-        {filtered.map((tool) => (
-          <Link
-            key={tool.slug}
-            href={`/tools/${tool.slug}`}
-            className="grid grid-cols-[1fr_100px_90px] items-center px-1 py-3 border-b border-border hover:bg-surface/50 transition-colors"
-          >
-            <div>
-              <div className="text-sm font-medium">{tool.name}</div>
-              <div className="text-xs text-text-secondary mt-0.5">
-                {tool.description}
-              </div>
-            </div>
-            <span className="font-mono text-xs text-text-secondary">
-              {tool.type}
-            </span>
-            <span
-              className={`font-mono text-xs ${
-                tool.severity ? "text-danger" : "text-text-muted"
-              }`}
+        <div className="grid grid-cols-3 gap-3">
+          {categories.map((c) => (
+            <div
+              key={c.id}
+              className="bg-surface-inset border border-border-soft rounded-lg p-3"
             >
-              {tool.severity ?? "—"}
-            </span>
-          </Link>
-        ))}
+              <div className="text-xs text-text-secondary mb-1.5">{c.name}</div>
+              <div className="text-xl font-medium">{c._count.tools}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
