@@ -10,6 +10,9 @@ export default function Header() {
         <Link href="/catalog" className="hover:text-text-primary transition-colors">
           Catalog
         </Link>
+        <Link href="/tools/add" className="hover:text-text-primary transition-colors">
+          Add tool
+        </Link>
       </nav>
     </header>
   );
