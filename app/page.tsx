@@ -1,9 +1,11 @@
-export default function Home() {
-  const categories = [
-    { name: "network", count: 34 },
-    { name: "siem", count: 18 },
-    { name: "dast", count: 21 },
-  ];
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+
+export default async function Home() {
+  const totalTools = await prisma.tool.count();
+  const categories = await prisma.category.findMany({
+    include: { _count: { select: { tools: true } } },
+  });
 
   return (
     <div className="relative overflow-hidden px-8 py-16">
@@ -19,29 +21,27 @@ export default function Home() {
           A curated catalog of scanners, SIEM platforms and forensics tools —
           with checklists for how to actually use them.
         </p>
-        <a
+        <Link
           href="/catalog"
           className="gradient-accent inline-block text-sm font-medium text-white px-5 py-2.5 rounded-lg"
         >
           Browse catalog
-        </a>
+        </Link>
       </div>
 
       <div className="relative max-w-2xl mx-auto bg-surface border border-border rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-medium">Catalog overview</span>
-          <span className="text-xs text-text-secondary">128 tools</span>
+          <span className="text-xs text-text-secondary">{totalTools} tools</span>
         </div>
         <div className="grid grid-cols-3 gap-3">
           {categories.map((c) => (
             <div
-              key={c.name}
+              key={c.id}
               className="bg-surface-inset border border-border-soft rounded-lg p-3"
             >
-              <div className="text-xs text-text-secondary mb-1.5">
-                {c.name}
-              </div>
-              <div className="text-xl font-medium">{c.count}</div>
+              <div className="text-xs text-text-secondary mb-1.5">{c.name}</div>
+              <div className="text-xl font-medium">{c._count.tools}</div>
             </div>
           ))}
         </div>
