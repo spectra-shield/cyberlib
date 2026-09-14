@@ -13,6 +13,9 @@ export default function Header() {
         <Link href="/tools/add" className="hover:text-text-primary transition-colors">
           Add tool
         </Link>
+        <Link href="/admin" className="hover:text-text-primary transition-colors">
+          Admin
+        </Link>
       </nav>
     </header>
   );
