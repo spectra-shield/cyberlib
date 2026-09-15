@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 const tools = {
   nmap: {
@@ -72,14 +73,7 @@ export default async function ToolPage({
   const tool = tools[slug as keyof typeof tools];
 
   if (!tool) {
-    return (
-      <div className="px-8 py-12 max-w-3xl mx-auto text-text-secondary">
-        Tool not found.{" "}
-        <Link href="/catalog" className="text-text-primary underline">
-          Back to catalog
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   return (
