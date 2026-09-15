@@ -12,7 +12,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, slug, type, severity, description, url, categoryName } = body;
+    const { name, slug, type, severity, description, url, categoryName, logo } = body;
 
     if (!name || !slug || !type || !description || !categoryName) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
         severity: severity || null,
         description,
         url: url || null,
+        logo: logo || null,
         categoryId: category.id,
       },
     });

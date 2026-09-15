@@ -21,6 +21,7 @@ model Tool {
   severity    String?
   description String
   url         String?
+  logo        String?
   categoryId  Int
   category    Category @relation(fields: [categoryId], references: [id])
   createdAt   DateTime @default(now())

@@ -7,6 +7,26 @@ export default function AddTool() {
   const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const json = await res.json();
+    if (json.url) setLogoUrl(json.url);
+    setUploading(false);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,6 +42,7 @@ export default function AddTool() {
       description: (form.elements.namedItem("description") as HTMLTextAreaElement).value.trim(),
       url: (form.elements.namedItem("url") as HTMLInputElement).value.trim() || null,
       categoryName: (form.elements.namedItem("categoryName") as HTMLInputElement).value.trim(),
+      logo: logoUrl,
     };
 
     const newErrors: Record<string, string> = {};
@@ -98,13 +119,29 @@ export default function AddTool() {
           )}
         </div>
 
+        <div>
+          <label className="text-xs text-text-secondary block mb-1.5">
+            Logo <span className="text-text-muted">(optional)</span>
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full text-sm text-text-secondary file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-surface-inset file:text-text-secondary"
+          />
+          {uploading && <p className="text-xs text-text-muted mt-1">Uploading...</p>}
+          {logoUrl && (
+            <img src={logoUrl} alt="preview" className="mt-2 h-10 w-10 rounded object-contain bg-surface-inset" />
+          )}
+        </div>
+
         {errors.form && (
           <p className="text-xs text-danger">{errors.form}</p>
         )}
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || uploading}
           className="gradient-accent w-full text-sm font-medium text-white py-2.5 rounded-lg disabled:opacity-50"
         >
           {loading ? "Adding..." : "Add tool"}
