@@ -7,16 +7,18 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-5-2D3748?logo=prisma)](https://www.prisma.io/)
 
-cyberlib is a structured directory of security tools — SAST/DAST scanners, SIEM platforms, network analyzers, forensics utilities, and more. Each tool has a dedicated page with a description, links, and a usage checklist, organized by category.
+cyberlib is a structured directory of security tools — SAST/DAST scanners, SIEM platforms, network analyzers, forensics utilities, and more. Each tool has a dedicated page with a description, links, and a logo, organized by category.
 
 ## Features
 
 - 🔍 Browse and filter tools by category
 - 🔎 Search tools by name
-- 📋 Detailed tool pages with usage checklists
-- 🎨 Responsive design, built mobile-first
+- 🔃 Sort by name, type or severity
+- 📋 Detailed tool pages with logo and external links
+- 🖼️ Logo upload when adding a tool
+- 🎨 Responsive dark UI
 - 🛠️ Add and delete tools through the UI
-- 🔌 JSON API for integrations
+- 🔌 JSON API
 
 ## Tech Stack
 
@@ -43,11 +45,11 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Pages
 
 ```
-/               landing page
-/catalog        browsable list of tools, filterable by category, searchable by name
-/tools/[slug]   individual tool page — description, links, checklist
-/tools/add      form to add a new tool
-/admin          admin panel — list of all tools with delete
+/               landing page with catalog overview
+/catalog        tool list — filter by category, search by name, sort
+/tools/[slug]   tool page — description, logo, link
+/tools/add      form to add a new tool with logo upload
+/admin          admin panel — full list with delete
 ```
 
 ## API
@@ -72,6 +74,7 @@ curl http://localhost:3000/api/tools
     "severity": null,
     "description": "Network scanner and host discovery tool.",
     "url": "https://nmap.org",
+    "logo": null,
     "categoryId": 1,
     "createdAt": "2026-09-14T00:00:00.000Z"
   }
@@ -100,12 +103,25 @@ curl -X DELETE http://localhost:3000/api/tools/1
 
 Returns `200` on success.
 
+### POST /api/upload
+
+Uploads an image file. Returns the public URL.
+
+```bash
+curl -X POST http://localhost:3000/api/upload \
+  -F "file=@logo.png"
+```
+
+```json
+{ "url": "/uploads/1234567890.png" }
+```
+
 ## Roadmap
 
 - [x] **Module 1** — static frontend prototype
 - [x] **Module 2** — Next.js routing and layouts
-- [x] **Module 3** — Prisma, forms, admin panel
-- [x] **Module 4** — search, API, final scenario
+- [x] **Module 3** — Prisma, forms, admin panel, media upload
+- [x] **Module 4** — search, sort, API, final scenario
 
 ---
 
