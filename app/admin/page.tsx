@@ -11,7 +11,9 @@ export default async function Admin() {
   return (
     <div className="px-8 py-12 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-medium">Admin</h1>
+        <div>
+          <h1 className="text-2xl font-medium">Manage tools</h1>
+        </div>
         <Link
           href="/tools/add"
           className="gradient-accent text-sm font-medium text-white px-4 py-2 rounded-lg"
